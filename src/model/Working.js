@@ -1,9 +1,9 @@
 import { CONSTANT } from '../constants/constant.js';
 
 export default class Working {
-  #dayForMonth = []; // 실제 달에 맞는 요일 순서
+  #dayForMonth = [];
 
-  #calendar = []; // 일정표
+  #calendar = [];
 
   constructor(monthAndDay, weekdayMan, holidayMan) {
     const [month, day] = monthAndDay.split(',');
@@ -14,62 +14,93 @@ export default class Working {
     this.makeDayForMonth();
   }
 
-  // TODO: 한달 근무표 만들기
+  pushHolidayManToCalendar(type, index, date) {
+    this.#calendar.push({
+      day: this.#dayForMonth[(date - 1) % 7],
+      man: this.holidayMan[index],
+      type,
+    });
+  }
+
+  pushWeekdayManToCalendar(type, index, date) {
+    this.#calendar.push({
+      day: this.#dayForMonth[(date - 1) % 7],
+      man: this.weekdayMan[index],
+      type,
+    });
+  }
+
+  getNextIndex = (index, type) => {
+    if (type === '휴일') {
+      return (index + 1) % this.holidayMan.length;
+    }
+    return (index + 1) % this.weekdayMan.length;
+  };
+
   makeCalendar() {
-    // TODO: 시작 일수는 1일, 종료 일수는 CONSTANT.DATE[month], 시작 요일은 day
-    const startDate = 1;
-    const endDate = CONSTANT.DATE[this.month];
-    let indexForWeek = 0;
-    let indexForHoliday = 0;
-    for (let date = startDate; date <= endDate; date += 1) {
-      // TODO: 요일이 법정 공휴일, 휴일, 평일인지 확인
-
-      const type = this.checkTypeOfDay(date); // 휴일 or 평일
-
-      // TODO: 휴일 or 평일에 따라 index 움직이면서 순서 짜기
-      if (type === '휴일') {
-        this.#calendar.push({
-          day: this.#dayForMonth[(date - 1) % 7],
-          man: this.holidayMan[indexForHoliday],
-          type,
-        });
-        indexForHoliday = (indexForHoliday + 1) % this.holidayMan.length;
-      } else if (type === '평일') {
-        this.#calendar.push({
-          day: this.#dayForMonth[(date - 1) % 7],
-          man: this.weekdayMan[indexForWeek],
-          type,
-        });
-        indexForWeek = (indexForWeek + 1) % this.weekdayMan.length;
-      }
-
-      // TODO: 비상 근무자는 어떤 경우에도 연속 2일은 근무할 수 없다.
-      if (this.#calendar.length >= 2) {
-        // day, man, type
-        const cur = this.#calendar[this.#calendar.length - 1];
-        const prev = this.#calendar[this.#calendar.length - 2];
-        if (cur.man === prev.man) {
-          // cur 순서를 바꾼다.
-          if (cur.type === '휴일') {
-            const nextMan =
-              this.holidayMan[indexForHoliday % this.holidayMan.length];
-            const tmp = nextMan;
-            this.holidayMan[indexForHoliday % this.holidayMan.length] = cur.man;
-            this.holidayMan[(indexForHoliday - 1) % this.holidayMan.length] =
-              tmp;
-          } else if (cur.type === '평일') {
-            const nextMan =
-              this.weekdayMan[indexForWeek % this.weekdayMan.length];
-            const tmp = nextMan;
-            this.weekdayMan[indexForWeek % this.weekdayMan.length] = cur.man;
-            this.weekdayMan[(indexForWeek - 1) % this.weekdayMan.length] = tmp;
-          }
-          this.#calendar = [];
-          return false;
-        }
+    let [indexForWeek, indexForHoliday] = [0, 0];
+    for (let date = 1; date <= CONSTANT.DATE[this.month]; date += 1) {
+      const { newIndexForWeek, newIndexForHoliday } = this.newMethod(
+        date,
+        indexForHoliday,
+        indexForWeek,
+      );
+      [indexForWeek, indexForHoliday] = [newIndexForWeek, newIndexForHoliday];
+      if (!this.checkCalendar(indexForHoliday, indexForWeek)) {
+        return false;
       }
     }
     return true;
+  }
+
+  newMethod(date, indexForHoliday, indexForWeek) {
+    const type = this.checkTypeOfDay(date);
+    if (type === '휴일') {
+      this.pushHolidayManToCalendar(type, indexForHoliday, date);
+      const newIndexForHoliday = this.getNextIndex(indexForHoliday);
+      return { newIndexForHoliday, newIndexForWeek: indexForWeek };
+    }
+    this.pushWeekdayManToCalendar(type, indexForWeek, date);
+    const newIndexForWeek = this.getNextIndex(indexForWeek);
+    return { newIndexForHoliday: indexForHoliday, newIndexForWeek };
+  }
+
+  checkCalendar(indexForHoliday, indexForWeek) {
+    if (this.#calendar.length < 2) {
+      return true;
+    }
+
+    const current = this.#calendar[this.#calendar.length - 1];
+    const previous = this.#calendar[this.#calendar.length - 2];
+    if (current.man !== previous.man) {
+      return true;
+    }
+
+    this.changeManOrder(current, indexForHoliday, indexForWeek);
+    this.#calendar = [];
+    return false;
+  }
+
+  changeManOrder(current, indexForHoliday, indexForWeek) {
+    if (current.type === '휴일') {
+      this.changeHolidayManOrder(indexForHoliday, current);
+    } else if (current.type === '평일') {
+      this.changeWeekdayManOrder(indexForWeek, current);
+    }
+  }
+
+  changeWeekdayManOrder(indexForWeek, current) {
+    const nextMan = this.weekdayMan[indexForWeek % this.weekdayMan.length];
+    const tmp = nextMan;
+    this.weekdayMan[indexForWeek % this.weekdayMan.length] = current.man;
+    this.weekdayMan[(indexForWeek - 1) % this.weekdayMan.length] = tmp;
+  }
+
+  changeHolidayManOrder(index, current) {
+    const nextMan = this.holidayMan[index % this.holidayMan.length];
+    const tmp = nextMan;
+    this.holidayMan[index % this.holidayMan.length] = current.man;
+    this.holidayMan[(index - 1) % this.holidayMan.length] = tmp;
   }
 
   getCalendar() {
@@ -85,7 +116,7 @@ export default class Working {
       CONSTANT.HOLIDAY_IN_LAW[this.month] !== undefined &&
       CONSTANT.HOLIDAY_IN_LAW[this.month][date] !== undefined
     ) {
-      return CONSTANT.HOLIDAY_IN_LAW[this.month][date]; // 휴일
+      return CONSTANT.HOLIDAY_IN_LAW[this.month][date];
     }
 
     return CONSTANT.TYPE_OF_DAY[this.#dayForMonth[(date - 1) % 7]];
