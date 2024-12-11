@@ -42,6 +42,32 @@ export default class Working {
         });
         indexForWeek = (indexForWeek + 1) % this.weekdayMan.length;
       }
+
+      // TODO: 비상 근무자는 어떤 경우에도 연속 2일은 근무할 수 없다.
+      if (this.#calendar.length >= 2) {
+        // day, man, type
+        const cur = this.#calendar[this.#calendar.length - 1];
+        const prev = this.#calendar[this.#calendar.length - 2];
+        if (cur.man === prev.man) {
+          // cur 순서를 바꾼다.
+          if (cur.type === '휴일') {
+            const nextMan =
+              this.holidayMan[indexForHoliday % this.holidayMan.length];
+            const tmp = nextMan;
+            this.holidayMan[indexForHoliday % this.holidayMan.length] = cur.man;
+            this.holidayMan[(indexForHoliday - 1) % this.holidayMan.length] =
+              tmp;
+          } else if (cur.type === '평일') {
+            const nextMan =
+              this.weekdayMan[indexForWeek % this.weekdayMan.length];
+            const tmp = nextMan;
+            this.weekdayMan[indexForWeek % this.weekdayMan.length] = cur.man;
+            this.weekdayMan[(indexForWeek - 1) % this.weekdayMan.length] = tmp;
+          }
+          this.#calendar = [];
+          return false;
+        }
+      }
     }
     return true;
   }
