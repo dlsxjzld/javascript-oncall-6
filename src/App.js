@@ -1,12 +1,16 @@
 import { InputView } from './view/InputView.js';
 import { OutputView } from './view/OutputView.js';
 import { MESSAGE } from './constants/message.js';
-import { validateMonthAndDay } from './validation/validateFunctions.js';
+import {
+  validateMonthAndDay,
+  validateWeekday,
+} from './validation/validateFunctions.js';
 
 class App {
   async run() {
     const monthAndDay = await this.getMonthAndDay();
-    console.log(monthAndDay);
+    const weekDayMan = await this.getWeekday();
+    console.log('weekDayMan', weekDayMan);
   }
 
   async getMonthAndDay() {
@@ -17,6 +21,17 @@ class App {
     } catch (error) {
       OutputView.printResult(error.message);
       return this.getMonthAndDay();
+    }
+  }
+
+  async getWeekday() {
+    try {
+      const input = await InputView.readUserInput(MESSAGE.ASK_WEEKDAY_MAN);
+      validateWeekday(input);
+      return input;
+    } catch (error) {
+      OutputView.printResult(error.message);
+      return this.getWeekday();
     }
   }
 }
