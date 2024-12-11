@@ -22,14 +22,14 @@ const isEmptyString = (input) => {
 };
 
 export const checkMonth = (input) => {
-  const [month, day] = input.split(',');
+  const [month] = input.split(',');
   toThrowNewError(
     CONSTANT.MONTH.includes(month) === false,
     `${ERROR_MESSAGE.INVALID} 1~12월만 입력해주세요.`,
   );
 };
 export const checkDay = (input) => {
-  const [month, day] = input.split(',');
+  const [, day] = input.split(',');
   toThrowNewError(
     CONSTANT.DAY.includes(day) === false,
     `${ERROR_MESSAGE.INVALID} (일, 월, 화, 수, 목, 금, 토)중에 하나만 입력해주세요.`,
