@@ -16,14 +16,13 @@ export const CONSTANT = {
     12: 31,
   },
   HOLIDAY_IN_LAW: {
-    '1:1': { month: 1, day: 1, type: '휴일' },
-    '3:1': { month: 3, day: 1, type: '휴일' },
-    '5:5': { month: 5, day: 5, type: '휴일' },
-    '6:6': { month: 6, day: 6, type: '휴일' },
-    '8:15': { month: 8, day: 15, type: '휴일' },
-    '10:3': { month: 10, day: 3, type: '휴일' },
-    '10:9': { month: 10, day: 9, type: '휴일' },
-    '12:25': { month: 12, day: 25, type: '휴일' },
+    1: { 1: '휴일' },
+    3: { 1: '휴일' },
+    5: { 5: '휴일' },
+    6: { 6: '휴일' },
+    8: { 15: '휴일' },
+    10: { 3: '휴일', 9: '휴일' },
+    12: { 25: '휴일' },
   },
   TYPE_OF_DAY: {
     // HOLIDAY_IN_LAW를 먼저 확인해야함 -> 있으면 TYPE_OF_DAY 확인 X
