@@ -5,5 +5,5 @@ export const MESSAGE = {
 };
 
 export const ERROR_MESSAGE = {
-  MONTH_DAY: '유효하지 않은 입력 값입니다. 다시 입력해 주세요.',
+  INVALID: '유효하지 않은 입력 값입니다. 다시 입력해 주세요.',
 };
