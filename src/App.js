@@ -4,13 +4,15 @@ import { MESSAGE } from './constants/message.js';
 import {
   validateMonthAndDay,
   validateWeekday,
+  validateHoliday,
 } from './validation/validateFunctions.js';
 
 class App {
   async run() {
     const monthAndDay = await this.getMonthAndDay();
-    const weekDayMan = await this.getWeekday();
-    console.log('weekDayMan', weekDayMan);
+    const { weekdayMan, holidayMan } = await this.getMans();
+    console.log('weekdayMan', weekdayMan);
+    console.log('holidayMan', holidayMan);
   }
 
   async getMonthAndDay() {
@@ -24,15 +26,27 @@ class App {
     }
   }
 
-  async getWeekday() {
+  async getMans() {
     try {
-      const input = await InputView.readUserInput(MESSAGE.ASK_WEEKDAY_MAN);
-      validateWeekday(input);
-      return input;
+      const weekdayMan = await this.getWeekday();
+      const holidayMan = await this.getHoliday(weekdayMan);
+      return { weekdayMan, holidayMan };
     } catch (error) {
       OutputView.printResult(error.message);
-      return this.getWeekday();
+      return this.getMans();
     }
+  }
+
+  async getWeekday() {
+    const input = await InputView.readUserInput(MESSAGE.ASK_WEEKDAY_MAN);
+    validateWeekday(input);
+    return input;
+  }
+
+  async getHoliday(weekdayMan) {
+    const input = await InputView.readUserInput(MESSAGE.ASK_HOLIDAY_MAN);
+    validateHoliday(input, weekdayMan);
+    return input;
   }
 }
 
