@@ -19,12 +19,29 @@ export default class Working {
     // TODO: 시작 일수는 1일, 종료 일수는 CONSTANT.DATE[month], 시작 요일은 day
     const startDate = 1;
     const endDate = CONSTANT.DATE[this.month];
-    const indexForWeek = 0;
-    const indexForHoliday = 0;
+    let indexForWeek = 0;
+    let indexForHoliday = 0;
     for (let date = startDate; date <= endDate; date += 1) {
       // TODO: 요일이 법정 공휴일, 휴일, 평일인지 확인
 
       const type = this.checkTypeOfDay(date); // 휴일 or 평일
+
+      // TODO: 휴일 or 평일에 따라 index 움직이면서 순서 짜기
+      if (type === '휴일') {
+        this.#calendar.push({
+          day: this.#dayForMonth[(date - 1) % 7],
+          man: this.holidayMan[indexForHoliday],
+          type,
+        });
+        indexForHoliday = (indexForHoliday + 1) % this.holidayMan.length;
+      } else if (type === '평일') {
+        this.#calendar.push({
+          day: this.#dayForMonth[(date - 1) % 7],
+          man: this.weekdayMan[indexForWeek],
+          type,
+        });
+        indexForWeek = (indexForWeek + 1) % this.weekdayMan.length;
+      }
     }
     return true;
   }
