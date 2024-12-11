@@ -6,13 +6,19 @@ import {
   validateWeekday,
   validateHoliday,
 } from './validation/validateFunctions.js';
+import Working from './model/Working.js';
 
 class App {
   async run() {
     const monthAndDay = await this.getMonthAndDay();
     const { weekdayMan, holidayMan } = await this.getMans();
-    console.log('weekdayMan', weekdayMan);
-    console.log('holidayMan', holidayMan);
+    const working = new Working(monthAndDay, weekdayMan, holidayMan);
+    while (true) {
+      const result = working.makeCalendar();
+      if (result) {
+        break;
+      }
+    }
   }
 
   async getMonthAndDay() {
