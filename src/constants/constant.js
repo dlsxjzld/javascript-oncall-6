@@ -1,0 +1,6 @@
+export const CONSTANT = {
+  // MIN_VISIT_RANGE: 1,
+  // MAX_VISIT_RANGE: 31,
+  // MIN_QUANTITY_RANGE: 1,
+  // MAX_QUANTITY_RANGE: 20,
+};
