@@ -72,6 +72,14 @@ export default class Working {
     return true;
   }
 
+  getCalendar() {
+    return this.#calendar;
+  }
+
+  getMonth() {
+    return this.month;
+  }
+
   checkTypeOfDay(date) {
     if (
       CONSTANT.HOLIDAY_IN_LAW[this.month] !== undefined &&
