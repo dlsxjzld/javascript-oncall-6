@@ -90,6 +90,22 @@ const checkManCount = (input) => {
   );
 };
 
+const checkSameMan = (input, weekdayMan) => {
+  const holidayMans = input.split(',');
+  const weekdayMans = weekdayMan.split(',');
+  let cnt = 0;
+  for (let idx = 0; idx < holidayMans.length; idx += 1) {
+    if (weekdayMans.includes(holidayMans[idx])) {
+      cnt += 1;
+    }
+  }
+
+  toThrowNewError(
+    cnt !== holidayMans.length,
+    `${ERROR_MESSAGE.INVALID} 평일과 휴일 근무자가 다릅니다.`,
+  );
+};
+
 export const validateWeekday = (input) => {
   hasEmptySpace(input);
   isEmptyString(input);
@@ -97,4 +113,14 @@ export const validateWeekday = (input) => {
   duplicateMan(input);
   checkManCountRange(input);
   checkManCount(input);
+};
+
+export const validateHoliday = (input, weekdayMan) => {
+  hasEmptySpace(input);
+  isEmptyString(input);
+  checkAllNickNameLength(input);
+  duplicateMan(input);
+  checkManCountRange(input);
+  checkManCount(input);
+  checkSameMan(input, weekdayMan);
 };
