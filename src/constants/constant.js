@@ -1,5 +1,5 @@
 export const CONSTANT = {
-  MONTH: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+  MONTH: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
   DAY: ['일', '월', '화', '수', '목', '금', '토'],
   DATE: {
     1: 31,
@@ -26,7 +26,7 @@ export const CONSTANT = {
     '12:25': { month: 12, day: 25, type: '휴일' },
   },
   TYPE_OF_DAY: {
-    // HOLIDAY_IN_LAW를 먼저 확인해야함
+    // HOLIDAY_IN_LAW를 먼저 확인해야함 -> 있으면 TYPE_OF_DAY 확인 X
     일: '휴일',
     월: '평일',
     화: '평일',
