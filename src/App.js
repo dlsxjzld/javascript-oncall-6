@@ -19,6 +19,7 @@ class App {
         break;
       }
     }
+    this.printCalendar(working);
   }
 
   async getMonthAndDay() {
@@ -53,6 +54,12 @@ class App {
     const input = await InputView.readUserInput(MESSAGE.ASK_HOLIDAY_MAN);
     validateHoliday(input, weekdayMan);
     return input;
+  }
+
+  printCalendar(working) {
+    const calendar = working.getCalendar();
+    const month = working.getMonth();
+    OutputView.printCalendar(month, calendar);
   }
 }
 
