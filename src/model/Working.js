@@ -93,14 +93,22 @@ export default class Working {
     const nextMan = this.weekdayMan[indexForWeek % this.weekdayMan.length];
     const tmp = nextMan;
     this.weekdayMan[indexForWeek % this.weekdayMan.length] = current.man;
-    this.weekdayMan[(indexForWeek - 1) % this.weekdayMan.length] = tmp;
+    if (indexForWeek === 0) {
+      this.weekdayMan[this.weekdayMan.length - 1] = tmp;
+    } else {
+      this.weekdayMan[(indexForWeek - 1) % this.weekdayMan.length] = tmp;
+    }
   }
 
-  changeHolidayManOrder(index, current) {
-    const nextMan = this.holidayMan[index % this.holidayMan.length];
+  changeHolidayManOrder(indexForHoliday, current) {
+    const nextMan = this.holidayMan[indexForHoliday % this.holidayMan.length];
     const tmp = nextMan;
-    this.holidayMan[index % this.holidayMan.length] = current.man;
-    this.holidayMan[(index - 1) % this.holidayMan.length] = tmp;
+    this.holidayMan[indexForHoliday % this.holidayMan.length] = current.man;
+    if (indexForHoliday === 0) {
+      this.holidayMan[this.holidayMan.length - 1] = tmp;
+    } else {
+      this.holidayMan[(indexForHoliday - 1) % this.holidayMan.length] = tmp;
+    }
   }
 
   getCalendar() {
